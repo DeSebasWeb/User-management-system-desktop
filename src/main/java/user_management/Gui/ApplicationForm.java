@@ -52,6 +52,12 @@ public class ApplicationForm extends JFrame{
         buscarButton.addActionListener(e -> {
             buscarUsuario();
         });
+        mostrarUsuariosButton.addActionListener(e -> {
+            mostrarUsuariosTabla();
+        });
+        limpiarButton.addActionListener(e -> {
+            limpiarDatos();
+        });
     }
 
     private void iniciarForma(){
@@ -102,29 +108,38 @@ public class ApplicationForm extends JFrame{
     }
 
     private void guardarUsuario(){
-        if (this.campoCedula.equals("")){
+        if (this.campoCedula.getText().equals("")){
             mostrarMensaje("Ingrese un numero de cedula");
+            this.campoCedula.requestFocusInWindow();
+            return;
         }
-        if(this.campoNombre.equals("")){
+        if(this.campoNombre.getText().equals("")){
             mostrarMensaje("Ingrese el nombre del usuario");
+            this.campoNombre.requestFocusInWindow();
+            return;
         }
 
-        var cedulaUsuario = Integer.parseInt(this.campoCedula.getText());
-        var nombreUsuario = this.campoNombre.getText();
-        var apellidoUsuario = this.campoApellido.getText();
-        var membresiaUsuario = this.tipoMembresia.getSelectedItem().toString();
-        Usuario usuario = new Usuario(this.idUsuario, cedulaUsuario, nombreUsuario, apellidoUsuario, membresiaUsuario);
+        try {
+            var cedulaUsuario = Integer.parseInt(this.campoCedula.getText());
+            var nombreUsuario = this.campoNombre.getText();
+            var apellidoUsuario = this.campoApellido.getText();
+            var membresiaUsuario = this.tipoMembresia.getSelectedItem().toString();
+            Usuario usuario = new Usuario(this.idUsuario, cedulaUsuario, nombreUsuario, apellidoUsuario, membresiaUsuario);
 
-        this.usuarioServicio.guardarUsuario(usuario);
+            this.usuarioServicio.guardarUsuario(usuario);
 
-        if (this.idUsuario == null){
-            mostrarMensaje("Se ha creado exitosamente el usuario");
-        } else{
-            mostrarMensaje("Se ha actualizado el cliente exitosamente");
+            if (this.idUsuario == null){
+                mostrarMensaje("Se ha creado exitosamente el usuario");
+            } else{
+                mostrarMensaje("Se ha actualizado el cliente exitosamente");
+            }
+            limpiarDatos();
+            mostrarUsuariosTabla();
+
+        }catch (Exception e){
+            mostrarMensaje("Alguno de los datos puestos es no es compatible, intentelo de nuevo");
+            e.getMessage();
         }
-        limpiarDatos();
-        mostrarUsuariosTabla();
-
     }
 
     private void limpiarDatos(){
@@ -153,7 +168,7 @@ public class ApplicationForm extends JFrame{
     }
 
     private void buscarUsuario(){
-        if(this.campoCedula.equals("")){
+        if(this.campoCedula.getText().equals("")){
             mostrarMensaje("Escriba la cedula del usuario a consultar.");
         }else{
             Integer cedulaUsuario = Integer.parseInt(this.campoCedula.getText());
